@@ -53,7 +53,7 @@ This project goes beyond software — it addresses key housing challenges in urb
 ### 👩‍🎓 For Students:
 - Increases access to safe and affordable housing.
 
- - Enhances decision-making with roommate matching and reviews.
+- Enhances decision-making with roommate matching and reviews.
 
 - Saves time and money spent on random visits and unreliable listings.
 
@@ -344,43 +344,44 @@ This phase involved creating and configuring a pluggable database named mon_2665
 
 ### 🧱 1. Database Creation (Container Setup)
 Before creating a pluggable database, we start by connecting as SYSDBA to the CDB root container and check existing containers.
-sql
+```sql
 sqlplus / as sysdba
-
+```
 Check existing pluggable databases
-sql
+```sql
 SHOW PDBS;
-
+```
 Result:
-sql
+```sql
     CON_ID CON_NAME                       OPEN MODE  RESTRICTED
 ---------- ------------------------------ ---------- ----------
          2 PDB$SEED                       READ ONLY  NO
          3 ORCLPDB                        MOUNTED
-
+```
 ✅ You can confirm you're working inside CDB$ROOT using:
-sql
+```sql
 SHOW CON_NAME;
-
+```
 ## 🛠 2. Create a Pluggable Database
 
 We created the PDB using Oracle’s standard naming format:
 
-mon_26651_nziza_student_housing_db
+`mon_26651_nziza_student_housing_db`
 
-🧾 Admin Username: prince
+🧾 Admin Username: `prince`
 
-🔑 Password: prince
+🔑 Password: `prince`
 
 Here’s the exact SQL command we used in CMD:
 
-sql
+```sql
 CREATE PLUGGABLE DATABASE mon_26651_nziza_student_housing_db
 ADMIN USER prince IDENTIFIED BY prince
 FILE_NAME_CONVERT={'C:\ORACLE21C\ORADATA\ORACLE\PDBseed\',
 'C:\ORACLE21C\ORADATA\ORACLE\mon_26651_nziza_student_housing_db\'};
-Pluggable database created.
 
+Pluggable database created.
+```
 ✅ The PDB was created successfully.
 
 ### Key Components:
@@ -394,60 +395,62 @@ Pluggable database created.
 ## 🔓 3. Open the Newly Created PDB
 
 After creation, we opened the pluggable database so that it becomes usable:
-sql
+```sql
 ALTER PLUGGABLE DATABASE mon_26651_nziza_student_housing_db OPEN;
-
+```
 ✅ *Purpose:* Makes the PDB accessible for operations
 
 ## 💾 4. Save the PDB State (Auto Start)
 
 Saving the state ensures the PDB auto-starts the next time the database is launched:
-sql
+```sql
 ALTER PLUGGABLE DATABASE mon_26651_nziza_student_housing_db SAVE STATE;
-
+```
 Why? Ensures PDB auto-starts when the CDB restarts
 
 ## 🔄 5. Set Session to New PDB
 Once the PDB is running, we switched our session to it:
-sql
+```sql
 ALTER SESSION SET CONTAINER = mon_26651_nziza_student_housing_db;
-
+```
 *✅ This allows us to create tables, users, and perform all operations inside our specific database.*
 
 ## 👨‍💻 6. User Account Creation
 
 To work within the PDB, we created a custom user named prince.
 
-sql
+```sql
 CREATE USER prince IDENTIFIED BY prince;
 
 Successful Alternative:
-
+```
 This user will manage tables, procedures, and other PL/SQL objects in our project.
 
 
 ## 🔐 7. Grant Privileges to the User
 To ensure full access and development capability, we granted all necessary privileges:
-sql
+```sql
 GRANT CONNECT, RESOURCE, DBA, SYSDBA TO prince;
 
-
+```
 ### ✅ Why These Privileges?
 
-- CONNECT allows login access
+- `CONNECT` allows login access
 
-- RESOURCE allows creation of tables, views, triggers
+- `RESOURCE` allows creation of tables, views, triggers
 
-- DBA gives full admin power over the PDB
+- `DBA `gives full admin power over the PDB
 
-- SYSDBA is the highest level access (used during setup)
+- `SYSDBA` is the highest level access (used during setup)
 
   
 ## 📸 Screenshot Requirement:
+
 ![Pluggable db](https://github.com/user-attachments/assets/ca241bad-052b-4980-8569-8bdedc20fa35)
 
 
 ### ✅ Verification Steps
+
 PDB Status Check
 
 ```sql
@@ -512,7 +515,7 @@ The Users table stores all registered accounts, distinguishing between students 
 
 ### 2. 🏠 Properties Table (Housing Inventory)
 
-sql
+```sql
 CREATE TABLE Property (
     property_id INT PRIMARY KEY,
     landlord_id INT,
@@ -526,7 +529,7 @@ CREATE TABLE Property (
     FOREIGN KEY (landlord_id) REFERENCES Users(user_id)
 );
 
-
+```
 ### 📌 Role in System:
 
 The Properties table stores rental listings posted by landlords. Each property includes price, room type, amenities, and availability status — all critical for students searching for housing.
@@ -653,7 +656,7 @@ The full table structures and data inserts (including Reviews and Listing) are a
 | UNIQUE              | email                                 | Ensures no duplicate email accounts exist.       |
 | CHECK               | room_type, user_role, budget      | Validates values fall within allowed ranges.     |
 | DEFAULT             | created_at                            | Auto-inserts timestamp for record creation.      |
-
+---
 
 ### ✅ Data Validation
 data has been validated in 3 key areas:
@@ -662,7 +665,7 @@ data has been validated in 3 key areas:
 | *Constraint Matching*    | All inserted data follows the CHECK, NOT NULL, UNIQUE, and FOREIGN KEY constraints. |
 | *Realistic Use*          | Data reflects real-world scenarios (e.g., students renting shared rooms).                   |
 | *Relationship Integrity* | All foreign keys point to valid entries (e.g., landlord must exist in the Users table).   |
-
+---
 ### 🔍 1. Validate Roles (No student registered as landlord)
 We ensure users with role student cannot insert properties (since only landlords should have properties).
 ```sql
@@ -800,7 +803,7 @@ Together, they support smooth functioning of the app’s student registration, r
 
 📊 Window Function Example:
 
-sql
+```sql
 
 SELECT 
     location,
@@ -808,17 +811,17 @@ SELECT
     student_id
 FROM 
     roommate_requests;
-
+```
 ### 🔍 Purpose:
 To apply window functions for advanced analytics like ranking, counting, or segmenting data without collapsing rows, which helps in smart roommate matching and decision-making.
 
 ❓ Problem: Which rooms are *most frequently requested by students* during a specific month?  
 
-sql
+```sql
 SELECT room_id, 
        COUNT(*) OVER (PARTITION BY room_id ORDER BY request_date) AS request_count
 FROM roommate_requests;
-
+```
 
 📌 *Purpose:* Use *window functions* to analyze trends and help the platform prioritize room assignments based on real-time demand.
 
@@ -827,7 +830,7 @@ FROM roommate_requests;
 ### 3️⃣ Procedures & Functions ⚙
 
 #### 🔸 Procedure: Get Room Info by ID
-sql
+```sql
 CREATE OR REPLACE PROCEDURE get_room_details(p_room_id IN NUMBER) IS
   v_location VARCHAR2(50);
   v_capacity NUMBER;
@@ -839,20 +842,20 @@ EXCEPTION
   WHEN NO_DATA_FOUND THEN
     DBMS_OUTPUT.PUT_LINE('❗Room not found.');
 END;
-
+```
 
 #### 🔸 Function: Count Total Active Listings
-sql
+```sql
 CREATE OR REPLACE FUNCTION count_active_rooms RETURN NUMBER IS
   v_count NUMBER;
 BEGIN
   SELECT COUNT(*) INTO v_count FROM rooms WHERE status = 'Available';
   RETURN v_count;
 END;
-
+```
 
 #### 🔸 Cursor Example: List All Students Seeking a Room
-sql
+```sql
 CREATE OR REPLACE PROCEDURE list_waiting_students IS
   CURSOR c_students IS
     SELECT full_name FROM students WHERE housing_status = 'Waiting';
@@ -866,7 +869,7 @@ BEGIN
   END LOOP;
   CLOSE c_students;
 END;
-
+```
 
 📌 *Purpose:* Reusable components for efficient data retrieval and reporting.
 
@@ -874,7 +877,7 @@ END;
 
 ### 4️⃣ Exception Handling 🛡
 
-sql
+```sql
 BEGIN
   INSERT INTO rooms VALUES (301, 'Gikondo', 3, 'Available');
 EXCEPTION
@@ -883,7 +886,7 @@ EXCEPTION
   WHEN OTHERS THEN
     DBMS_OUTPUT.PUT_LINE('Unexpected error: ' || SQLERRM);
 END;
-
+```
 
 📌 *Purpose:* Ensure the app gracefully handles errors, avoiding crashes and improving reliability.
 
@@ -905,14 +908,14 @@ Tested all the following to ensure the system works as expected:
 ### 6️⃣ Packages 📦
 
 #### ✅ Package: housing_pkg
-sql
+```sql
 CREATE OR REPLACE PACKAGE housing_pkg AS
   PROCEDURE get_student_info(p_id NUMBER);
   FUNCTION total_rooms_available RETURN NUMBER;
 END housing_pkg;
 
-
-sql
+```
+```sql
 CREATE OR REPLACE PACKAGE BODY housing_pkg AS
   PROCEDURE get_student_info(p_id NUMBER) IS
     v_name VARCHAR2(50);
@@ -928,7 +931,7 @@ CREATE OR REPLACE PACKAGE BODY housing_pkg AS
     RETURN v_total;
   END;
 END housing_pkg;
-
+```
 
 📌 *Purpose:* Group related procedures/functions together for better organization and security.
 
@@ -985,7 +988,7 @@ To address this challenge, we must:
 
 ### 🔃 Simple Trigger: Block Manipulation on Weekdays and Holidays
 
-sql
+```sql
 CREATE OR REPLACE TRIGGER trg_block_employee_edits
 BEFORE INSERT OR UPDATE OR DELETE ON roommate_requests
 FOR EACH ROW
@@ -1000,7 +1003,7 @@ BEGIN
         RAISE_APPLICATION_ERROR(-20002, 'Today is a public holiday. Modification denied.');
     END IF;
 END;
-
+```
 
 ### 🧩 Purpose:
 
@@ -1016,7 +1019,7 @@ END;
 
 ### 🔁 Compound Trigger (for room table)
 
-sql
+```sql
 CREATE OR REPLACE TRIGGER trg_room_compound
 FOR INSERT OR DELETE ON rooms
 COMPOUND TRIGGER
@@ -1040,7 +1043,7 @@ BEGIN
   END LOOP;
 END AFTER STATEMENT;
 END;
-
+```
 
 ### 🧩 Purpose:
 
@@ -1057,7 +1060,7 @@ END;
 
 ### 🗂 Audit Table
 
-sql
+```sql
 CREATE TABLE audit_log (
     audit_id       NUMBER GENERATED BY DEFAULT AS IDENTITY,
     user_id        VARCHAR2(50),
@@ -1066,12 +1069,12 @@ CREATE TABLE audit_log (
     status         VARCHAR2(10)
 );
 
-
+```
 ---
 
 ### 📌 Trigger-Based Auditing
 
-sql
+```sql
 CREATE OR REPLACE TRIGGER trg_audit_operations
 BEFORE INSERT OR UPDATE OR DELETE ON roommate_requests
 FOR EACH ROW
@@ -1091,11 +1094,11 @@ BEGIN
     END IF;
 END;
 
-
+```
 ### 🧩 Purpose:
 
 * Enforce security policies
-* Record all attempts (allowed/denied)
+* Record all attempts (`allowed/denied`)
 
 ### 📤 Output:
 
@@ -1112,15 +1115,15 @@ END;
 
 ### 🧰 Audit Package Spec
 
-sql
+```sql
 CREATE OR REPLACE PACKAGE audit_pkg AS
     PROCEDURE log_action(p_user VARCHAR2, p_op VARCHAR2, p_status VARCHAR2);
 END;
-
+```
 
 ### 🔧 Audit Package Body
 
-sql
+```sql
 CREATE OR REPLACE PACKAGE BODY audit_pkg AS
     PROCEDURE log_action(p_user VARCHAR2, p_op VARCHAR2, p_status VARCHAR2) IS
     BEGIN
@@ -1128,7 +1131,7 @@ CREATE OR REPLACE PACKAGE BODY audit_pkg AS
         VALUES (p_user, SYSDATE, p_op, p_status);
     END;
 END;
-
+```
 
 🧩 *Purpose:*
 
