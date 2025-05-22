@@ -2,6 +2,11 @@
 Empowering Students to Find the Right Home and Roommate — Easily and Effectively
 ---
 
+**Student ID:** 26651
+
+**Names🪗:** Nziza Prince
+---
+
 ## 🌟 Introduction
 In the fast-growing city of Kigali, finding suitable, safe, and affordable housing has become a real challenge for college and university students. With the number of students rising each year, the demand for housing is increasing — but the supply of transparent, centralized, and user-friendly platforms remains limited.
 
