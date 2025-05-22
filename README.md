@@ -2,9 +2,11 @@
 Empowering Students to Find the Right Home and Roommate — Easily and Effectively
 ---
 
-**Student ID:** 26651
+ ## 👥 student Information 
 
-**Names🪗:** Nziza Prince
+| 👤 Name           | 🆔 Student ID | 🧑‍💻 Role          |
+|------------------|---------------|-------------------|
+| 🧑‍🔧 Nziza Prince | 26651      | 💻 Developer    |
 ---
 
 ## 🌟 Introduction
